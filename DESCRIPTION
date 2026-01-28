@@ -27,3 +27,5 @@ Imports:
     tidyr
 Suggests: 
     magrittr
+URL: https://github.com/kimbridges/timelinesr
+BugReports: https://github.com/kimbridges/timelinesr/issues
