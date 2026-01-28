@@ -1,0 +1,23 @@
+---
+title: "test"
+format: html
+editor: visual
+---
+
+Run the standard wrapper and then show the map
+
+```{r}
+library(timelinesr)
+
+timeline <- "Timelines/Timeline.json"
+photos_dir <- "Photos"
+timezone <- "America/Los_Angeles" ## "Pacific/Honolulu"
+
+# Run the Wrapper Workflow
+timeline <- read_timeline(timeline)
+results  <- geotag_photos(photos_dir, timeline, tz = timezone)
+write_geotags(results, photo_dir)
+
+# Show the Map
+visualize_geotags(results)
+```

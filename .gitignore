@@ -1,0 +1,10 @@
+Timelines/
+Photos/
+*.json
+*.csv
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto

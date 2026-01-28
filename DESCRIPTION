@@ -1,0 +1,29 @@
+Package: timelinesr
+Type: Package
+Title: Adds Locations from an Android Timeline to Images
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Kim", "Bridges",
+      email = "kim.bridges@gmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Use timeline location data captured with a cellphone.
+    Both detailed (last 30 day) and summarized values (beyond 30 day)
+    are used to approximate the photo locations done with time
+    comparisons. Locations are stored in the photo EXIF data.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Imports: 
+    dplyr,
+    exifr,
+    jsonlite,
+    leaflet,
+    lubridate,
+    stringr,
+    tidyr
+Suggests: 
+    magrittr
