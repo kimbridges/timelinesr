@@ -2,17 +2,17 @@
 % Please edit documentation in R/wrappers.R
 \name{read_timeline}
 \alias{read_timeline}
-\title{Read and Process Google Timeline JSON}
+\title{Read Google Timeline JSON}
 \usage{
 read_timeline(json_path)
 }
 \arguments{
-\item{json_path}{String. Path to the Google Timeline JSON file.}
+\item{json_path}{Path to the JSON file (e.g., "Timelines/History.json").}
 }
 \value{
-A list containing two dataframes: 'signals' and 'visits'.
+A list containing two tibbles: $visits (Semantic) and $raw_locations (GPS).
 }
 \description{
-This wrapper function loads the JSON file and automatically splits it into
-"Raw Signals" (Plan A) and "Semantic Visits" (Plan B).
+High-level wrapper to ingest Google Location History data.
+Returns both Semantic (Place) visits and Raw GPS signals.
 }

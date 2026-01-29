@@ -1,20 +1,26 @@
-#' Read and Process Google Timeline JSON
+#' Read Google Timeline JSON
 #'
-#' This wrapper function loads the JSON file and automatically splits it into
-#' "Raw Signals" (Plan A) and "Semantic Visits" (Plan B).
+#' High-level wrapper to ingest Google Location History data.
+#' Returns both Semantic (Place) visits and Raw GPS signals.
 #'
-#' @param json_path String. Path to the Google Timeline JSON file.
-#' @return A list containing two dataframes: 'signals' and 'visits'.
+#' @param json_path Path to the JSON file (e.g., "Timelines/History.json").
+#' @return A list containing two tibbles: $visits (Semantic) and $raw_locations (GPS).
 #' @export
 read_timeline <- function(json_path) {
-  if (!file.exists(json_path)) stop("Timeline file not found.")
+  if (!file.exists(json_path)) stop("File not found: ", json_path)
 
   message("Reading Timeline JSON (this may take a moment)...")
   raw_json <- jsonlite::fromJSON(json_path)
 
+  # Process Plan B (Semantic Places)
+  visits_df <- clean_semantic_history(raw_json)
+
+  # Process Plan C (Raw GPS)
+  raw_df <- clean_raw_history(raw_json)
+
   list(
-    signals = clean_timeline_signals(raw_json),
-    visits  = clean_semantic_history(raw_json)
+    visits = visits_df,
+    raw_locations = raw_df
   )
 }
 

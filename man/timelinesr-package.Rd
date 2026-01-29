@@ -8,6 +8,14 @@
 \description{
 Use timeline location data captured with a cellphone. Both detailed (last 30 day) and summarized values (beyond 30 day) are used to approximate the photo locations done with time comparisons. Locations are stored in the photo EXIF data.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/kimbridges/timelinesr}
+  \item Report bugs at \url{https://github.com/kimbridges/timelinesr/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Kim Bridges \email{kim.bridges@gmail.com}
 

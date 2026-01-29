@@ -24,7 +24,8 @@ Imports:
     leaflet,
     lubridate,
     stringr,
-    tidyr
+    tidyr, 
+    sf
 Suggests: 
     magrittr
 URL: https://github.com/kimbridges/timelinesr

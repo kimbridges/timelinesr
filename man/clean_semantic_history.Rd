@@ -10,9 +10,9 @@ clean_semantic_history(raw_json_data)
 \item{raw_json_data}{The list object returned by jsonlite::fromJSON().}
 }
 \value{
-A tibble with columns: start_utc, end_utc, lat, lon, place_id.
+A tibble with columns: start_utc, end_utc, lat, lon, place_name, place_address.
 }
 \description{
-Extracts "Place Visits" (e.g., Hotels, Parks) from the Google Timeline JSON.
-Used as a fallback when raw GPS signals are missing or sparse.
+Extracts "Place Visits" from the Google Timeline JSON.
+robustly handles missing place names or addresses.
 }
