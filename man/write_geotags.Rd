@@ -2,15 +2,14 @@
 % Please edit documentation in R/wrappers.R
 \name{write_geotags}
 \alias{write_geotags}
-\title{Write Geotags to Files}
+\title{Write Geotags to Image Files}
 \usage{
-write_geotags(tagged_df, photo_folder)
+write_geotags(tagged_df)
 }
 \arguments{
 \item{tagged_df}{The dataframe returned by geotag_photos().}
-
-\item{photo_folder}{String. The folder where images are located.}
 }
 \description{
-A wrapper that generates the manifest and immediately runs ExifTool.
+Uses ExifTool to write the calculated latitude and longitude back into the
+original image files.
 }

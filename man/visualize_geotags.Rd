@@ -9,10 +9,6 @@ visualize_geotags(tagged_df)
 \arguments{
 \item{tagged_df}{The dataframe returned by geotag_photos().}
 }
-\value{
-A Leaflet map object.
-}
 \description{
-Creates an interactive Leaflet map showing where photos were located.
-Distinguishes between "Raw GPS" (Plan A) and "Semantic Place" (Plan B).
+Creates a simple map of where photos were taken.
 }

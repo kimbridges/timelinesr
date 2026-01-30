@@ -24,47 +24,91 @@ read_timeline <- function(json_path) {
   )
 }
 
-#' Write Geotags to Files
+#' Write Geotags to Image Files
 #'
-#' A wrapper that generates the manifest and immediately runs ExifTool.
+#' Uses ExifTool to write the calculated latitude and longitude back into the
+#' original image files.
 #'
 #' @param tagged_df The dataframe returned by geotag_photos().
-#' @param photo_folder String. The folder where images are located.
 #' @export
-write_geotags <- function(tagged_df, photo_folder) {
+write_geotags <- function(tagged_df) {
 
-  # 1. Create Manifest
-  csv_file <- write_gps_manifest(tagged_df)
+  # 1. Filter to only successful tags
+  to_write <- tagged_df |>
+    filter(!is.na(lat), !is.na(lon))
 
-  # 2. Apply to Images
-  apply_gps_to_images(csv_file, photo_folder)
+  if (nrow(to_write) == 0) {
+    message("No geotagged photos to write.")
+    return(NULL)
+  }
 
-  message("Geotagging complete.")
+  message("Writing EXIF tags to ", nrow(to_write), " images...")
+
+  # 2. Iterate and Write (using exifr/exiftool)
+  # We use a loop here for safety, though batch commands are possible.
+  for (i in 1:nrow(to_write)) {
+    row <- to_write[i, ]
+
+    # Construct the command directly for exiftool is often safest,
+    # but let's use the package wrapper if you prefer.
+    # Here is a robust system command approach that works on Mac/Linux/Windows:
+
+    cmd <- sprintf(
+      'exiftool -overwrite_original -GPSLatitude="%s" -GPSLongitude="%s" -GPSLatitudeRef="%s" -GPSLongitudeRef="%s" "%s"',
+      abs(row$lat), abs(row$lon),
+      ifelse(row$lat >= 0, "N", "S"),
+      ifelse(row$lon >= 0, "E", "W"),
+      row$SourceFile
+    )
+
+    system(cmd, ignore.stdout = TRUE, ignore.stderr = TRUE)
+  }
+
+  message("Done!")
 }
 
 
-#' Geotag Photos (Master Function)
+#' Geotag Photos using Hybrid Track
 #'
-#' This is the main function for the package. It reads timestamps from images,
-#' fuses them with the timeline data, and calculates coordinates.
+#' Interpolates coordinates for photos based on the continuous hybrid track.
 #'
-#' @param photo_folder String. Path to the folder containing images.
-#' @param timeline_data The list returned by read_timeline().
-#' @param tz String. The time zone where the photos were taken (e.g., "Asia/Tokyo", "Europe/Paris").
-#'   Crucial for matching camera time (local) to GPS time (UTC). Default is "Pacific/Honolulu".
-#' @return A dataframe of photos with calculated coordinates and method used.
+#' @param track_df The dataframe returned by fuse_layers().
+#' @param photos_df A dataframe of photos (must have a 'timestamp' or 'timestamp_utc' column).
+#' @return The photos dataframe with new 'lat' and 'lon' columns.
 #' @export
-geotag_photos <- function(photo_folder, timeline_data, tz = "Pacific/Honolulu") {
+geotag_photos <- function(track_df, photos_df) {
 
-  message("Processing photos using timezone: ", tz)
+  message("Interpolating coordinates for ", nrow(photos_df), " images...")
 
-  # 1. Get Photo Clocks
-  photos <- get_photo_timestamps(photo_folder, tz_offset = tz)
+  # 1. Standardize Column Names
+  # If we have 'timestamp_utc', rename it to 'timestamp' for the math
+  if ("timestamp_utc" %in% names(photos_df) && !"timestamp" %in% names(photos_df)) {
+    photos_df <- photos_df |> rename(timestamp = timestamp_utc)
+  }
 
-  if (nrow(photos) == 0) stop("No valid images found in folder.")
+  # 2. Validation
+  if (!all(c("lat", "lon", "timestamp") %in% names(track_df))) {
+    stop("Track data missing required columns. Did you run fuse_layers()?")
+  }
+  if (!"timestamp" %in% names(photos_df)) {
+    stop("Photos data missing 'timestamp' column.")
+  }
 
-  # 2. Fuse
-  fused <- fuse_data(photos, timeline_data$signals, timeline_data$visits)
+  # 3. Interpolation (The Math)
+  track_time <- as.numeric(track_df$timestamp)
+  photo_time <- as.numeric(photos_df$timestamp)
 
-  return(fused)
+  # Interpolate Lat/Lon
+  # rule=1: Return NA if photo is outside the track range (e.g., before the trip started)
+  # rule=2: Use the closest point (good for photos taken just after the log stopped)
+  # Let's use rule=1 for safety (don't fake data).
+
+  results <- photos_df |>
+    mutate(
+      lat = approx(track_time, track_df$lat, photo_time, rule = 1)$y,
+      lon = approx(track_time, track_df$lon, photo_time, rule = 1)$y,
+      geotag_status = if_else(!is.na(lat), "geotagged", "out_of_range")
+    )
+
+  return(results)
 }

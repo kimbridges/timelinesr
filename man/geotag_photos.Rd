@@ -2,22 +2,18 @@
 % Please edit documentation in R/wrappers.R
 \name{geotag_photos}
 \alias{geotag_photos}
-\title{Geotag Photos (Master Function)}
+\title{Geotag Photos using Hybrid Track}
 \usage{
-geotag_photos(photo_folder, timeline_data, tz = "Pacific/Honolulu")
+geotag_photos(track_df, photos_df)
 }
 \arguments{
-\item{photo_folder}{String. Path to the folder containing images.}
+\item{track_df}{The dataframe returned by fuse_layers().}
 
-\item{timeline_data}{The list returned by read_timeline().}
-
-\item{tz}{String. The time zone where the photos were taken (e.g., "Asia/Tokyo", "Europe/Paris").
-Crucial for matching camera time (local) to GPS time (UTC). Default is "Pacific/Honolulu".}
+\item{photos_df}{A dataframe of photos (must have a 'timestamp' or 'timestamp_utc' column).}
 }
 \value{
-A dataframe of photos with calculated coordinates and method used.
+The photos dataframe with new 'lat' and 'lon' columns.
 }
 \description{
-This is the main function for the package. It reads timestamps from images,
-fuses them with the timeline data, and calculates coordinates.
+Interpolates coordinates for photos based on the continuous hybrid track.
 }

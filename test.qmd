@@ -1,23 +1,33 @@
----
-title: "test"
-format: html
-editor: visual
----
 
-Run the standard wrapper and then show the map
+# Check the Workflow
 
 ```{r}
 library(timelinesr)
 
-timeline <- "Timelines/Timeline.json"
-photos_dir <- "Photos"
-timezone <- "America/Los_Angeles" ## "Pacific/Honolulu"
+## 1. IDENTIFY LOCATIONS
+timeline_json <- "Timelines/History.json"
+photo_folder  <- "Photos/"
 
-# Run the Wrapper Workflow
-timeline <- read_timeline(timeline)
-results  <- geotag_photos(photos_dir, timeline, tz = timezone)
-write_geotags(results, photo_dir)
+## 2. INGEST THE TIMELINE
+timeline <- read_timeline(timeline_json)
 
-# Show the Map
-visualize_geotags(results)
+## 3. FUSE TIMELINE DATA
+track <- fuse_layers(timeline)
+
+## 4. LOAD PHOTOS 
+photos <- get_photo_timestamps(photo_folder) 
+
+## 5. GET THE TIMELINE-PHOTO MATCH
+tagged <- geotag_photos(track, photos)
+
+## 6. CHECK THE RESULTS
+head(tagged)
+
+## 7. WRITE LOCATIONS TO THE PHOTOS 
+write_geotags(tagged)
+
+## 8. VISUALIZE ON A MAP
+visualize_geotags(tagged)
+ 
 ```
+
