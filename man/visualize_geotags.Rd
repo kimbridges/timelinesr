@@ -2,13 +2,17 @@
 % Please edit documentation in R/visualize.R
 \name{visualize_geotags}
 \alias{visualize_geotags}
-\title{Visualize Geotagged Photos}
+\title{Visualize Geotagged Photos (Interactive)}
 \usage{
 visualize_geotags(tagged_df)
 }
 \arguments{
 \item{tagged_df}{The dataframe returned by geotag_photos().}
 }
+\value{
+A leaflet map widget.
+}
 \description{
-Creates a simple map of where photos were taken.
+Creates an interactive map of photo locations using Leaflet.
+Allows zooming and clicking to inspect timestamps.
 }

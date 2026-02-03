@@ -5,8 +5,8 @@
 library(timelinesr)
 
 ## 1. IDENTIFY LOCATIONS
-timeline_json <- "Timelines/History.json"
-photo_folder  <- "Photos/"
+timeline_json <- "Timelines/AlaMoana.json"
+photo_folder  <- "Birds/"
 
 ## 2. INGEST THE TIMELINE
 timeline <- read_timeline(timeline_json)
@@ -21,7 +21,7 @@ photos <- get_photo_timestamps(photo_folder)
 tagged <- geotag_photos(track, photos)
 
 ## 6. CHECK THE RESULTS
-head(tagged)
+head(tagged,20)
 
 ## 7. WRITE LOCATIONS TO THE PHOTOS 
 write_geotags(tagged)
